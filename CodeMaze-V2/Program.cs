@@ -2,6 +2,7 @@ using NLog;
 using CodeMaze_V2.Extensions;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Http;
+using Service;
 
 namespace CodeMaze_V2
 {
@@ -21,6 +22,9 @@ namespace CodeMaze_V2
             builder.Services.ConfigureRepositoryManager();
             builder.Services.ConfigureServiceManager();
             builder.Services.ConfigureSqlContext(builder.Configuration);
+            builder.Services.AddControllers()
+                .AddApplicationPart(typeof(CompanyEmployees.Presentation.AssemblyReference).Assembly);
+            builder.Services.AddAutoMapper(typeof(Program));
         
 
             builder.Services.AddControllers();
