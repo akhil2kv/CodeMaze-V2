@@ -14,6 +14,7 @@ namespace Service
         private readonly Lazy<IEmployeeService> _employeeService;
 
         private readonly Lazy<ICompanyService> _companyService;
+
         private readonly IMapper _mapper;
 
         public ServiceManager(IRepositoryManager repository, ILoggerManager logger,IMapper mapper)
