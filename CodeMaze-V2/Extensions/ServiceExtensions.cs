@@ -36,10 +36,10 @@ namespace CodeMaze_V2.Extensions
 
         public static void ConfigureSqlContext(this IServiceCollection services, IConfiguration configuration) =>
             services.AddDbContext<RepositoryContext>(opts =>
-                opts.UseSqlServer(configuration.GetConnectionString("sqlConnection"), b =>
-                                   b.MigrationsAssembly("CodeMaze_V2")
-                               )
-                       );
+                opts.UseSqlServer(configuration.GetConnectionString("sqlConnection"), b =>b.MigrationsAssembly("CodeMaze_V2")
+                ));
+
+
     }
 
 }

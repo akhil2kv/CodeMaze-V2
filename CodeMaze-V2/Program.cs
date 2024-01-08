@@ -2,6 +2,8 @@ using NLog;
 using CodeMaze_V2.Extensions;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Http;
+using Service;
+using Contracts;
 
 namespace CodeMaze_V2
 {
@@ -21,24 +23,32 @@ namespace CodeMaze_V2
             builder.Services.ConfigureRepositoryManager();
             builder.Services.ConfigureServiceManager();
             builder.Services.ConfigureSqlContext(builder.Configuration);
+            builder.Services.AddControllers(config =>
+            {
+                config.RespectBrowserAcceptHeader = true;
+                config.ReturnHttpNotAcceptable = true;
+            }).AddXmlDataContractSerializerFormatters();
+            builder.Services.AddControllers()
+                .AddApplicationPart(typeof(CompanyEmployees.Presentation.AssemblyReference).Assembly);
+
+            builder.Services.AddAutoMapper(typeof(Program));
+
+
         
 
             builder.Services.AddControllers();
 
             var app = builder.Build();
 
+            var logger = app.Services.GetRequiredService<ILoggerManager>();
+            app.ConfigureExceptionHandler(logger);
+
             // Configure the HTTP request pipeline.
+            if(app.Environment.IsProduction())
+                app.UseHsts();
 
             app.UseHttpsRedirection();
 
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseHsts();
-            }
             app.UseStaticFiles();
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
