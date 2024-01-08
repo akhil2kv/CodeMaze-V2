@@ -5,13 +5,12 @@ using Shared.DataTransferObjects;
 using System.Text;
 namespace CodeMaze_V2
 {
-    // https://docs.microsoft.com/en-us/aspnet/core/web-api/advanced/formatting?view=aspnetcore-5.0#custom-formatter
-    // generate commit message for all this chnages
-    // git commit -m "Add CsvOutputFormatter class"
-
-
     public class CsvOutputFormatter : TextOutputFormatter
     {
+        // what does this class do?
+        // it takes a list of companies and outputs them as a csv file to the browser for download by the user  
+        // it is used in the CompaniesController.cs file
+
         public CsvOutputFormatter()
         {
             SupportedMediaTypes.Add(MediaTypeHeaderValue.Parse("text/csv"));
