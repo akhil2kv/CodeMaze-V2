@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 namespace Shared.DataTransferObjects
 {
     [Serializable]
-    public record CompanyDto (Guid Id, string Name, string FullAddress);
+    public record EmployeeDto(Guid id, string Name, int Age, string Position);
 }
