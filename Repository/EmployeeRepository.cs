@@ -22,5 +22,10 @@ namespace Repository
             FindByCondition(e => e.CompanyId.Equals(companyid) && e.Id.Equals(id), trackChanges)
             .SingleOrDefault();
 
+        public void CreateEmployeeForCompany(Guid companyid, Employee employee)
+        {
+            employee.CompanyId = companyid;
+            Create(employee);
+        }
     }
 }

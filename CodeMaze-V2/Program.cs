@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Http;
 using Service;
 using Contracts;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CodeMaze_V2
 {
@@ -23,6 +24,11 @@ namespace CodeMaze_V2
             builder.Services.ConfigureRepositoryManager();
             builder.Services.ConfigureServiceManager();
             builder.Services.ConfigureSqlContext(builder.Configuration);
+
+            builder.Services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });
             
             builder.Services.AddControllers(config =>
             {
