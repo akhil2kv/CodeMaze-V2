@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Entities.Models;
+using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
 using Shared.DataTransferObjects;
 using System;
@@ -45,6 +47,32 @@ namespace CompanyEmployees.Presentation.Controllers
         public IActionResult DeleteEmployeeForCompany(Guid companyid, Guid id)
         {
             _service.EmployeeService.DeleteEmployeeForCompany(companyid, id, trackChanges: false);
+
+            return NoContent();
+        }
+
+        [HttpPut("{id:guid}")]
+        public IActionResult UpdateEmployeeForCompany(Guid companyId,Guid id, [FromBody] EmployeeForUpdateDto employeeForUpdateDto)
+        {
+            if (employeeForUpdateDto is null)
+                return BadRequest("EmployeeForUpdateDto object is null");
+
+            _service.EmployeeService.UpdateEmployeeForCompany(companyId,id, employeeForUpdateDto, compTrackChanges: false, empTrackChanges: true);
+
+            return NoContent();
+        }
+
+        [HttpPatch("{id:guid}")]
+        public IActionResult PartiallyUpdatedEmployeeForCompany(Guid companyId,Guid id,[FromBody] JsonPatchDocument<EmployeeForUpdateDto> patchDoc)
+        {
+            if(patchDoc is null)
+                return BadRequest("patchDoc object is null");
+
+            var result = _service.EmployeeService.GetEmployeeForPatch( companyId, id, compChanges: false, empChanges: true);
+
+            patchDoc.ApplyTo(result.employeeTopatch);
+
+            _service.EmployeeService.SaveChangesForPatch(result.employeeTopatch, result.employeeEntity);
 
             return NoContent();
         }

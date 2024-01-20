@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Http;
 using Service;
 using Contracts;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using System.Dynamic;
 
 namespace CodeMaze_V2
 {
@@ -14,7 +17,7 @@ namespace CodeMaze_V2
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(),"/nlog.config"));
+            LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
 
             // Add services to the container.
 
@@ -29,21 +32,20 @@ namespace CodeMaze_V2
             {
                 options.SuppressModelStateInvalidFilter = true;
             });
-            
+
             builder.Services.AddControllers(config =>
             {
                 config.RespectBrowserAcceptHeader = true;
                 config.ReturnHttpNotAcceptable = true;
+                config.InputFormatters.Insert(0, GetJsonPatchInputFormatter());
             }).AddXmlDataContractSerializerFormatters()
-              .AddCustomCSVFormatter();
+              .AddCustomCSVFormatter()
+              .AddApplicationPart(typeof(CompanyEmployees.Presentation.AssemblyReference).Assembly);
 
             builder.Services.AddControllers()
                 .AddApplicationPart(typeof(CompanyEmployees.Presentation.AssemblyReference).Assembly);
 
             builder.Services.AddAutoMapper(typeof(Program));
-
-
-        
 
             builder.Services.AddControllers();
 
@@ -53,7 +55,7 @@ namespace CodeMaze_V2
             app.ConfigureExceptionHandler(logger);
 
             // Configure the HTTP request pipeline.
-            if(app.Environment.IsProduction())
+            if (app.Environment.IsProduction())
                 app.UseHsts();
 
             app.UseHttpsRedirection();
@@ -71,6 +73,12 @@ namespace CodeMaze_V2
             app.MapControllers();
 
             app.Run();
+
+            NewtonsoftJsonPatchInputFormatter GetJsonPatchInputFormatter() =>
+                new ServiceCollection().AddLogging().AddMvc().AddNewtonsoftJson()
+                .Services.BuildServiceProvider()
+                .GetRequiredService<IOptions<MvcOptions>>().Value.InputFormatters
+                .OfType<NewtonsoftJsonPatchInputFormatter>().First();
         }
     }
 }
