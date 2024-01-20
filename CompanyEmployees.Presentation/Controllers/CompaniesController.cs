@@ -66,5 +66,16 @@ namespace CompanyEmployees.Presentation.Controllers
 
             return NoContent();
         }
+
+        [HttpPut("{id:guid}")]
+        public IActionResult UpdateCompany(Guid id, [FromBody] CompanyForUpdateDto companyForUpdateDto)
+        {
+            if (companyForUpdateDto is null)
+                return BadRequest("CompanyForUpdateDto object is null");
+
+            _service.CompanyService.UpdateCompany(id, companyForUpdateDto,trackChanges:true);
+
+            return NoContent();
+        }
     }
 }
