@@ -38,6 +38,9 @@ namespace CompanyEmployees.Presentation.Controllers
             if(company is null)
                 return BadRequest("CompanyForCreationDto object is null");
 
+            if (!ModelState.IsValid)
+                return UnprocessableEntity(ModelState);
+
             var companyEntity = _service.CompanyService.CreateCompany(company);
 
             return CreatedAtRoute("CompanyById", new { id = companyEntity.Id }, companyEntity);
@@ -54,6 +57,12 @@ namespace CompanyEmployees.Presentation.Controllers
         [HttpPost("collection")]
         public IActionResult CreateCompanyCollection([FromBody] IEnumerable<CompanyForCreationDto> companyCollection)
         {
+            if(companyCollection is null)
+                return BadRequest("Company collection is null");
+
+            if (!ModelState.IsValid)
+                return UnprocessableEntity(ModelState);
+
             var result = _service.CompanyService.CreateCompanyCollection(companyCollection);
 
             return CreatedAtRoute("CompanyCollection", new { result.ids }, result.companies);
