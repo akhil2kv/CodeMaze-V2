@@ -38,6 +38,9 @@ namespace CompanyEmployees.Presentation.Controllers
             if(employeeForCreationDto is null)
                 return BadRequest("EmployeeForCreationDto object is null");
 
+            if (!ModelState.IsValid)
+                return UnprocessableEntity(ModelState);
+
             var employeeToReturn =_service.EmployeeService.CreateEmployeeForCompany(companyid,employeeForCreationDto, trackChanges: false);
 
             return CreatedAtRoute("GetEmployeeForCompany", new { companyid, id = employeeToReturn.id }, employeeToReturn);
@@ -56,6 +59,9 @@ namespace CompanyEmployees.Presentation.Controllers
         {
             if (employeeForUpdateDto is null)
                 return BadRequest("EmployeeForUpdateDto object is null");
+
+            if (!ModelState.IsValid)
+                return UnprocessableEntity(ModelState);
 
             _service.EmployeeService.UpdateEmployeeForCompany(companyId,id, employeeForUpdateDto, compTrackChanges: false, empTrackChanges: true);
 
