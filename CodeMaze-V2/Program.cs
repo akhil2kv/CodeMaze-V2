@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using System.Dynamic;
+using CompanyEmployees.Presentation.ActionFilters;
 
 namespace CodeMaze_V2
 {
@@ -32,6 +33,8 @@ namespace CodeMaze_V2
             {
                 options.SuppressModelStateInvalidFilter = true;
             });
+
+            builder.Services.AddScoped<ValidationFilterAttribute>();
 
             builder.Services.AddControllers(config =>
             {
