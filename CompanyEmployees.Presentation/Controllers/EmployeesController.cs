@@ -4,10 +4,12 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
 using Shared.DataTransferObjects;
+using Shared.RequestFeatures;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace CompanyEmployees.Presentation.Controllers
@@ -20,10 +22,13 @@ namespace CompanyEmployees.Presentation.Controllers
         public EmployeesController(IServiceManager service) => _service = service;
 
         [HttpGet]
-        public async Task<IActionResult> GetEmployeesForCompany(Guid companyId)
+        public async Task<IActionResult> GetEmployeesForCompany(Guid companyId,[FromQuery] EmployeeParameters employeeParameters)
         {
-            var employees = await _service.EmployeeService.GetAllEmployeesAsync(companyId, trackChanges: false);
-            return Ok(employees);
+            var pagedResult = await _service.EmployeeService.GetAllEmployeesAsync(companyId, employeeParameters, trackChanges: false);
+
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(pagedResult.metadata));
+
+            return Ok(pagedResult.employees);
         }
 
         [HttpGet("{id:guid}", Name = "GetEmployeeForCompany")]
@@ -39,7 +44,7 @@ namespace CompanyEmployees.Presentation.Controllers
         {
             var employeeToReturn =await _service.EmployeeService.CreateEmployeeForCompanyAsync(companyid, employeeForCreationDto, trackChanges: false);
 
-            return CreatedAtRoute("GetEmployeeForCompanyAsync", new { companyid, id = employeeToReturn.id }, employeeToReturn);
+            return CreatedAtRoute("GetEmployeeForCompany", new { companyid, id = employeeToReturn.id }, employeeToReturn);
         }
 
         [HttpDelete("{id:guid}")]
