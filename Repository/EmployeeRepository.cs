@@ -15,13 +15,14 @@ namespace Repository
         public EmployeeRepository(RepositoryContext repositoryContext) : base(repositoryContext)
         {
         }
-        public async Task<IEnumerable<Employee>> GetAllEmployeesAsync(Guid companyid, EmployeeParameters employeeParameters, bool trackChanges) =>
-             await FindByCondition(e => e.CompanyId.Equals(companyid), trackChanges)
-            .OrderBy(e => e.Name)
-            .Skip((employeeParameters.PageNumber - 1) * employeeParameters.PageSize)
-            .Take(employeeParameters.PageSize)
-            .ToListAsync();
+        public async Task<PagedList<Employee>> GetAllEmployeesAsync(Guid companyid, EmployeeParameters employeeParameters, bool trackChanges)
+        {
+            var employees = await FindByCondition(e => e.CompanyId.Equals(companyid), trackChanges)
+                .OrderBy(e => e.Name)
+                .ToListAsync();
 
+            return PagedList<Employee>.ToPagedList(employees, employeeParameters.PageNumber, employeeParameters.PageSize);
+        }
         public async Task<Employee> GetEmployeeAsync(Guid companyid, Guid id, bool trackChanges) =>
              await FindByCondition(e => e.CompanyId.Equals(companyid) && e.Id.Equals(id), trackChanges)
             .SingleOrDefaultAsync();
