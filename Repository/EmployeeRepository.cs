@@ -2,6 +2,7 @@
 using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using Shared.RequestFeatures;
+using Repository.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,9 +18,12 @@ namespace Repository
         }
         public async Task<PagedList<Employee>> GetAllEmployeesAsync(Guid companyid, EmployeeParameters employeeParameters, bool trackChanges)
         {
-            var employees = await FindByCondition(e => e.CompanyId.Equals(companyid), trackChanges)
-                .OrderBy(e => e.Name)
-                .ToListAsync();
+            var employees = 
+                    await FindByCondition(e => e.CompanyId.Equals(companyid) ,trackChanges)
+                    .FilterEmployees(employeeParameters.MinAge, employeeParameters.MaxAge)
+                    .Search(employeeParameters.SearchItem)
+                    .Sort(employeeParameters.Orderby)
+                    .ToListAsync();
 
             return PagedList<Employee>.ToPagedList(employees, employeeParameters.PageNumber, employeeParameters.PageSize);
         }
