@@ -23,7 +23,7 @@ namespace Shared.RequestFeatures
             AddRange(items);
         }
 
-        public static PagedList<T> ToPagedList(IEnumerable<T> source, int pageSize,int PageNumber)
+        public static PagedList<T> ToPagedList(IEnumerable<T> source,int PageNumber, int pageSize)
         {
             var count = source.Count();
             var items = source
