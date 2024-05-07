@@ -9,6 +9,8 @@ using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using System.Dynamic;
 using CompanyEmployees.Presentation.ActionFilters;
+using Service.DataShaping;
+using Shared.DataTransferObjects;
 
 namespace CodeMaze_V2
 {
@@ -28,6 +30,8 @@ namespace CodeMaze_V2
             builder.Services.ConfigureRepositoryManager();
             builder.Services.ConfigureServiceManager();
             builder.Services.ConfigureSqlContext(builder.Configuration);
+            builder.Services.AddScoped<IDataShaper<EmployeeDto>, DataShaper<EmployeeDto>>();
+
 
             builder.Services.Configure<ApiBehaviorOptions>(options =>
             {
