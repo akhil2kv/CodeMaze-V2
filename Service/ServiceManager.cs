@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Contracts;
 using Service.Contracts;
+using Shared.DataTransferObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,9 +18,9 @@ namespace Service
 
         private readonly IMapper _mapper;
 
-        public ServiceManager(IRepositoryManager repository, ILoggerManager logger,IMapper mapper)
+        public ServiceManager(IRepositoryManager repository, ILoggerManager logger,IMapper mapper,IDataShaper<EmployeeDto> dataShaper)
         {
-            _employeeService = new Lazy<IEmployeeService>(() => new EmployeeService(repository, logger, mapper));
+            _employeeService = new Lazy<IEmployeeService>(() => new EmployeeService(repository, logger, mapper,dataShaper));
             _companyService = new Lazy<ICompanyService>(() => new CompanyService(repository, logger, mapper));
         }
 
